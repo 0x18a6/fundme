@@ -20,7 +20,7 @@ contract FundMeTest is Test {
 
     function test_OwnerIsMsgSender() public {
         console.log("i_owner:", fundMe.i_owner());
-        assertEq(fundMe.i_owner(), address(this));
+        assertEq(fundMe.i_owner(), msg.sender);
         /// @dev compare to the address of the test contract because technically it's the msg.sender of fundMe
     }
 
