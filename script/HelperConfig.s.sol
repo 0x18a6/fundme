@@ -44,6 +44,10 @@ contract HelperConfig is Script {
         // deploy the mock
         // return the mock address
 
+        if (activeConfig.priceFeed != address(0)) {
+            return activeConfig;
+        }
+
         vm.startBroadcast();
         /// @dev mocking a contract essentially means creating a second version of that contract which behaves very similar to the original one, but in a way that can be easily controlled by the developer
         MockV3Aggregator mock = new MockV3Aggregator(DECIMALS, INITIAL_PRICE);
