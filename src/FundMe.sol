@@ -4,7 +4,7 @@ pragma solidity ^0.8.18;
 import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 import {PriceConverter} from "./PriceConverter.sol";
 
-error NotOwner();
+error FundMe__NotOwner();
 
 contract FundMe {
     using PriceConverter for uint256;
@@ -14,7 +14,7 @@ contract FundMe {
 
     // Could we make this constant?  /* hint: no! We should make it immutable! */
     address public /* immutable */ i_owner;
-    uint256 public constant MINIMUM_USD = 5 * 10 ** 18;
+    uint256 public constant MINIMUM_USD = 5e18;
     
     constructor() {
         i_owner = msg.sender;
@@ -34,7 +34,7 @@ contract FundMe {
     
     modifier onlyOwner {
         // require(msg.sender == owner);
-        if (msg.sender != i_owner) revert NotOwner();
+        if (msg.sender != i_owner) revert FundMe__NotOwner();
         _;
     }
     
