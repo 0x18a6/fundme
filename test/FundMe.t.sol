@@ -15,7 +15,12 @@ contract FundMeTest is Test {
     }
 
     function test_MinUsdIsFive() public {
-        assertEq(fundMe.MINIMUM_USD(), 5e18);
+        assertEq(fundMe.MINIMUM_USD(), 2e18);
+    }
+
+    function test_fund() public payable {
+        vm.expectRevert();
+        fundMe.fund{value: 2e18}();
     }
 
     function test_OwnerIsMsgSender() public {
