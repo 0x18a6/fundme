@@ -33,9 +33,10 @@ contract FundMeTest is Test {
     //     fundMe.fund{value: 2e18}();
     // }
 
-    function test_fundersUpdated() public payable {
+    function test_funderIsUpdated() public payable {
+        vm.prank(USER);
         fundMe.fund{value: 69e18}();
-        assertEq(fundMe.getFunder(0), address(this));
+        assertEq(fundMe.getFunder(0), USER);
     }
 
     function test_OwnerIsMsgSender() public {
