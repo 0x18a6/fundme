@@ -69,6 +69,14 @@ contract FundMe {
     //  /        \
     //receive()  fallback()
 
+    /**
+     * view / pure functions (getters)
+     */
+
+    function getFunder(uint256 _index) public view returns (address) {
+        return s_funders[_index];
+    }
+
     fallback() external payable {
         fund();
     }
