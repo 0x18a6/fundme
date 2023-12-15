@@ -1,0 +1,12 @@
+.FundMe.t.sol
+└── fund()
+    ├── when value is less than MINIMUM_USD
+    │   └── it should revert
+    └── when value is greater than or equal to MINIMUM_USD
+        ├── it should increment the amountFunded of the funder with the value
+        └── it should push the funder to the funders array
+└── withdraw()
+    ├── when called by anyone other than owner
+    │   └── it should revert
+    └── when called by owner
+        └── it should transfer the balance of the contract to the owner
