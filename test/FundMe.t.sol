@@ -10,6 +10,7 @@ contract FundMeTest is Test {
     address USER = makeAddr("user");
     uint256 public constant VALUE = 69e18;
     uint256 public constant INITIAL_BALANCE = 100e18;
+    uint256 public constant LESS_ETH_FOR_FUND = 2e18;
 
     function setUp() external {
         // fundMe = new FundMe(0x694AA1769357215DE4FAC081bf1f309aDC325306);
@@ -29,9 +30,8 @@ contract FundMeTest is Test {
     // }
 
     function test_RevertWithoutEnoughETH() public {
-        vm.prank(USER);
         vm.expectRevert();
-        fundMe.fund{value: 2e18}();
+        fundMe.fund{value: LESS_ETH_FOR_FUND}();
     }
 
     function test_AddressToAmountFundedIsUpdated() public payable {
@@ -73,7 +73,10 @@ contract FundMeTest is Test {
         // arrange
         uint256 startingOwnerBalance = fundMe.getOwner().balance;
         console.log("startingOwnerBalance:", startingOwnerBalance);
-        uint256 startingFundMeBalance = fundMe.getFunder(0).balance;
+
+        // When you fund in the main (fundMe) contract the ether is sent to the
+        // contact address of the fundMe contract
+        uint256 startingFundMeBalance = address(fundMe).balance;
         console.log("startingFundMeBalance:", startingFundMeBalance);
 
         // act
@@ -84,11 +87,16 @@ contract FundMeTest is Test {
         // assert
         uint256 endingOwnerBalance = fundMe.getOwner().balance;
         console.log("endingOwnerBalance:", endingOwnerBalance);
+        // When you fund in the main (fundMe) contract the ether is sent to the
+        // contact address of the fundMe contract
         uint256 endingFundMeBalance = address(fundMe).balance;
         console.log("endingFundMeBalance:", endingFundMeBalance);
 
         assertEq(endingFundMeBalance, 0);
-        assertEq(endingOwnerBalance, startingOwnerBalance + startingFundMeBalance);
+        assertEq(
+            endingOwnerBalance,
+            startingOwnerBalance + startingFundMeBalance
+        );
         // vm.stopPrank();
     }
 }

@@ -77,6 +77,11 @@ contract FundMe {
         return s_funders[_index];
     }
 
+
+    function getOwner() external view returns (address) {
+        return i_owner;
+    }
+
     fallback() external payable {
         fund();
     }
