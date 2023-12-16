@@ -57,9 +57,13 @@ contract FundMeTest is Test {
         assertEq(fundMe.getVersion(), 4);
     }
 
-    function test_OnlyOwnerCanWithdraw() public payable {
+    modifier funded() {
         vm.startPrank(USER);
         fundMe.fund{value: VALUE}();
+        _;
+    }
+
+    function test_OnlyOwnerCanWithdraw() public funded {
         vm.expectRevert();
         fundMe.withdraw();
         vm.stopPrank();
