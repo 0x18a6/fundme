@@ -57,31 +57,38 @@ contract FundMeTest is Test {
         assertEq(fundMe.getVersion(), 4);
     }
 
-    modifier funded() {
-        vm.startPrank(USER);
+    modifier funded(address _prankster) {
+        vm.prank(_prankster);
         fundMe.fund{value: VALUE}();
         _;
     }
 
-    function test_OnlyOwnerCanWithdraw() public funded {
+    function test_OnlyOwnerCanWithdraw() public funded(USER) {
         vm.expectRevert();
         fundMe.withdraw();
         vm.stopPrank();
     }
 
-    function test_withdrawWithASingleFunder() public funded {
+    function test_withdrawWithASingleFunder() public funded(USER) {
         // arrange
         uint256 startingOwnerBalance = fundMe.getOwner().balance;
+        console.log("startingOwnerBalance:", startingOwnerBalance);
         uint256 startingFundMeBalance = fundMe.getFunder(0).balance;
+        console.log("startingFundMeBalance:", startingFundMeBalance);
+
         // act
-        vm.startPrank(fundMe.getOwner());
+        // vm.startPrank(fundMe.getOwner());
+        vm.prank(fundMe.getOwner());
         fundMe.withdraw();
+
         // assert
         uint256 endingOwnerBalance = fundMe.getOwner().balance;
+        console.log("endingOwnerBalance:", endingOwnerBalance);
         uint256 endingFundMeBalance = address(fundMe).balance;
+        console.log("endingFundMeBalance:", endingFundMeBalance);
 
         assertEq(endingFundMeBalance, 0);
         assertEq(endingOwnerBalance, startingOwnerBalance + startingFundMeBalance);
-        vm.stopPrank();
+        // vm.stopPrank();
     }
 }
