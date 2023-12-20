@@ -41,7 +41,6 @@ contract FundMeTest is Test {
     }
 
     function test_OwnerIsMsgSender() public {
-        console.log("i_owner:", fundMe.i_owner());
         /// @dev compare to the address of the test contract because technically it's the msg.sender of fundMe
         assertEq(fundMe.i_owner(), msg.sender);
     }
@@ -75,8 +74,6 @@ contract FundMeTest is Test {
 
         uint256 startingOwnerBalance = fundMe.getOwner().balance;
         uint256 startingFundMeBalance = address(fundMe).balance;
-        console.log("startingOwnerBalance:", startingOwnerBalance);
-        console.log("startingFundMeBalance:", startingFundMeBalance);
 
         // act
         vm.prank(fundMe.getOwner());
@@ -85,8 +82,6 @@ contract FundMeTest is Test {
         // assert
         uint256 endingOwnerBalance = fundMe.getOwner().balance;
         uint256 endingFundMeBalance = address(fundMe).balance;
-        console.log("endingOwnerBalance:", endingOwnerBalance);
-        console.log("endingFundMeBalance:", endingFundMeBalance);
 
         assertEq(endingFundMeBalance, 0);
         assertEq(endingOwnerBalance, startingOwnerBalance + startingFundMeBalance);
