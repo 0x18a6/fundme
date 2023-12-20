@@ -69,15 +69,25 @@ contract FundMeTest is Test {
         vm.stopPrank();
     }
 
-    function test_withdrawWithASingleFunder() public funded(USER) {
+    function test_withdraw( /*uint256 _numberOfFunders*/ ) public funded(USER) {
+        uint256 _numberOfFunders = 3;
+
         // arrange
+        if (_numberOfFunders > 1) {
+            for (uint160 i; i < _numberOfFunders; i++) {
+                hoax(fundMe.getFunder(i), VALUE);
+                fundMe.fund{value: VALUE}();
+            }
+        }
+
         uint256 startingOwnerBalance = fundMe.getOwner().balance;
         console.log("startingOwnerBalance:", startingOwnerBalance);
-        uint256 startingFundMeBalance = fundMe.getFunder(0).balance;
+        uint256 startingFundMeBalance = address(fundMe).balance;
         console.log("startingFundMeBalance:", startingFundMeBalance);
 
         // act
         // vm.startPrank(fundMe.getOwner());
+        // vm.prank(fundMe.getOwner());
         vm.prank(fundMe.getOwner());
         fundMe.withdraw();
 
