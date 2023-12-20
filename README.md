@@ -1,3 +1,3 @@
 # FundMe
 
-![happy merchant](https://en.wikipedia.org/wiki/Happy_Merchant#/media/File:The_Happy_Merchant.jpg)
+![happy merchant](https://upload.wikimedia.org/wikipedia/en/1/1d/The_Happy_Merchant.jpg)
