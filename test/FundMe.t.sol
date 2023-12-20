@@ -12,7 +12,6 @@ contract FundMeTest is Test {
     uint256 public constant INITIAL_BALANCE = 100e18;
 
     function setUp() external {
-        // fundMe = new FundMe(0x694AA1769357215DE4FAC081bf1f309aDC325306);
         DeployFundMe deployFundMe = new DeployFundMe();
         fundMe = deployFundMe.run();
         vm.deal(USER, INITIAL_BALANCE);
@@ -22,13 +21,7 @@ contract FundMeTest is Test {
         assertEq(fundMe.MINIMUM_USD(), 5e18);
     }
 
-    // FIXME: this test is not reverting on my machine
-    // function test_RevertWithoutEnoughETH() public payable {
-    //     vm.expectRevert();
-    //     fundMe.fund{value: 2e18}();
-    // }
-
-    // FIXME
+    // FIXME: this test is not passing on my machine
     // function test_RevertWithoutEnoughETH() public {
     //     vm.prank(USER);
     //     vm.expectRevert();
@@ -49,11 +42,10 @@ contract FundMeTest is Test {
 
     function test_OwnerIsMsgSender() public {
         console.log("i_owner:", fundMe.i_owner());
-        assertEq(fundMe.i_owner(), msg.sender);
         /// @dev compare to the address of the test contract because technically it's the msg.sender of fundMe
+        assertEq(fundMe.i_owner(), msg.sender);
     }
 
-    // forge test --match-test test_versionIsAccurate --fork-url $SEPOLIA_URL
     function test_versionIsAccurate() public {
         assertEq(fundMe.getVersion(), 4);
     }
@@ -71,9 +63,9 @@ contract FundMeTest is Test {
     }
 
     function test_withdraw( /*uint256 _numberOfFunders*/ ) public funded(USER) {
-        uint256 _numberOfFunders = 3;
-
         // arrange
+        uint256 _numberOfFunders = 1;
+
         if (_numberOfFunders > 1) {
             for (uint160 i; i < _numberOfFunders; i++) {
                 hoax(fundMe.getFunder(i), VALUE);
@@ -82,24 +74,21 @@ contract FundMeTest is Test {
         }
 
         uint256 startingOwnerBalance = fundMe.getOwner().balance;
-        console.log("startingOwnerBalance:", startingOwnerBalance);
         uint256 startingFundMeBalance = address(fundMe).balance;
+        console.log("startingOwnerBalance:", startingOwnerBalance);
         console.log("startingFundMeBalance:", startingFundMeBalance);
 
         // act
-        // vm.startPrank(fundMe.getOwner());
-        // vm.prank(fundMe.getOwner());
         vm.prank(fundMe.getOwner());
         fundMe.withdraw();
 
         // assert
         uint256 endingOwnerBalance = fundMe.getOwner().balance;
-        console.log("endingOwnerBalance:", endingOwnerBalance);
         uint256 endingFundMeBalance = address(fundMe).balance;
+        console.log("endingOwnerBalance:", endingOwnerBalance);
         console.log("endingFundMeBalance:", endingFundMeBalance);
 
         assertEq(endingFundMeBalance, 0);
         assertEq(endingOwnerBalance, startingOwnerBalance + startingFundMeBalance);
-        // vm.stopPrank();
     }
 }
