@@ -12,10 +12,7 @@ contract FundMe {
     uint256 public constant MINIMUM_USD = 5e18;
     mapping(address => uint256) public s_addressToAmountFunded;
     address[] public s_funders;
-
-    // Could we make this constant?  /* hint: no! We should make it immutable! */
-    address public /* immutable */ i_owner;
-
+    address public immutable i_owner;
     AggregatorV3Interface private s_priceFeed;
 
     constructor(address _priceFeed) {
@@ -25,7 +22,6 @@ contract FundMe {
 
     function fund() public payable {
         require(msg.value.getConversionRate(s_priceFeed) >= MINIMUM_USD, "You need to spend more ETH!");
-        // require(PriceConverter.getConversionRate(msg.value) >= MINIMUM_USD, "You need to spend more ETH!");
         s_addressToAmountFunded[msg.sender] += msg.value;
         s_funders.push(msg.sender);
     }
@@ -47,17 +43,19 @@ contract FundMe {
             s_addressToAmountFunded[funder] = 0;
         }
         s_funders = new address[](0);
-        // // transfer
-        // payable(msg.sender).transfer(address(this).balance);
 
-        // // send
-        // bool sendSuccess = payable(msg.sender).send(address(this).balance);
-        // require(sendSuccess, "Send failed");
-
-        // call
         (bool callSuccess,) = payable(msg.sender).call{value: address(this).balance}("");
         require(callSuccess, "Call failed");
     }
+
+    function getFunder(uint256 _index) public view returns (address) {
+        return s_funders[_index];
+    }
+
+    function getOwner() public view returns (address) {
+        return i_owner;
+    }
+
     // Explainer from: https://solidity-by-example.org/fallback/
     // Ether is sent to contract
     //      is msg.data empty?
@@ -69,19 +67,6 @@ contract FundMe {
     //   yes   no
     //  /        \
     //receive()  fallback()
-
-    /**
-     * view / pure functions (getters)
-     */
-
-    function getFunder(uint256 _index) public view returns (address) {
-        return s_funders[_index];
-    }
-
-    function getOwner() public view returns (address) {
-        return i_owner;
-    }
-
     fallback() external payable {
         fund();
     }
@@ -90,12 +75,3 @@ contract FundMe {
         fund();
     }
 }
-
-// Concepts we didn't cover yet (will cover in later sections)
-// 1. Enum
-// 2. Events
-// 3. Try / Catch
-// 4. Function Selector
-// 5. abi.encode / decode
-// 6. Hash with keccak256
-// 7. Yul / Assembly
