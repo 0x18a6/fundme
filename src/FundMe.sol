@@ -9,12 +9,12 @@ error FundMe__NotOwner();
 contract FundMe {
     using PriceConverter for uint256;
 
+    uint256 public constant MINIMUM_USD = 5e18;
     mapping(address => uint256) public s_addressToAmountFunded;
     address[] public s_funders;
 
     // Could we make this constant?  /* hint: no! We should make it immutable! */
     address public /* immutable */ i_owner;
-    uint256 public constant MINIMUM_USD = 5e18;
 
     AggregatorV3Interface private s_priceFeed;
 
@@ -41,7 +41,8 @@ contract FundMe {
     }
 
     function withdraw() public onlyOwner {
-        for (uint256 funderIndex = 0; funderIndex < s_funders.length; funderIndex++) {
+        uint256 len = s_funders.length;
+        for (uint256 funderIndex; funderIndex < len; funderIndex++) {
             address funder = s_funders[funderIndex];
             s_addressToAmountFunded[funder] = 0;
         }
