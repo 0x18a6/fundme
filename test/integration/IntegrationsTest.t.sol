@@ -22,6 +22,8 @@ contract IntegrationsTest is Test {
         FundFundMe fundFundMe = new FundFundMe();
         fundFundMe.fundFundMe(address(fundMe));
 
+        assert(address(fundMe).balance != 0); // to make sure fundFundMe() works, the test may pass even if withdrawFundMe() fails
+
         WithdrawFundMe withdrawFundMe = new WithdrawFundMe();
         withdrawFundMe.withdrawFundMe(address(fundMe));
 
