@@ -10,4 +10,4 @@ project from Cyfrin Updraft: Foundry Fundamentals
 
 1. clone this repo
 2. update .env file
-3. run `make fund`
+3. run `make fund-sepolia`
