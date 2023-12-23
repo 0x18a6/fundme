@@ -2,7 +2,9 @@
 
 ![happy merchant](https://upload.wikimedia.org/wikipedia/en/1/1d/The_Happy_Merchant.jpg)
 
-fund this contract if u like its README section ( ͡° ͜ʖ ͡°), project from Cyfrin Updraft: Foundry Fundamentals
+fund this contract if u like its README section **( ͡° ͜ʖ ͡°)**
+
+project from Cyfrin Updraft: Foundry Fundamentals
 
 # how to fund
 
@@ -13,4 +15,4 @@ fund this contract if u like its README section ( ͡° ͜ʖ ͡°), project from 
 # known issues
 
 - [ ] Error:
-      script failed: the path broadcast is not allowed to be accessed for read operations
+      `script failed: the path broadcast is not allowed to be accessed for read operations`
