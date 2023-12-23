@@ -11,8 +11,3 @@ project from Cyfrin Updraft: Foundry Fundamentals
 1. clone this repo
 2. update .env file
 3. run `make fund`
-
-# known issues
-
-- [ ] Error:
-      `script failed: the path broadcast is not allowed to be accessed for read operations`
