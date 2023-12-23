@@ -4,7 +4,7 @@
 
 fund this contract if u like its README section **( ͡° ͜ʖ ͡°)**
 
-project from Cyfrin Updraft: Foundry Fundamentals
+project from Cyfrin Updraft: [Foundry Fundamentals](https://updraft.cyfrin.io/courses/foundry)
 
 # how to fund
 
