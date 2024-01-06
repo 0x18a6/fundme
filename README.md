@@ -16,7 +16,7 @@ the contract allows users to fund it with Ether and only the Owner to withdraw t
 
    - `make anvil`: creates a local testnet node for deploying and testing sc.
 
-   - `make deploy ARGS="--network $NETWORK_ARGS"`: deploys `FundMe` contract. ($NETWORK_ARGS is either anvil or sepolia)
+   - `make deploy ARGS="--network $NETWORK_ARGS"`: deploys `FundMe` contract. (`$NETWORK_ARGS` is either anvil or sepolia)
 
    - `make fund ARGS="--network $NETWORK_ARGS"`: funds the `FundMe` contract.
 
