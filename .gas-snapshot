@@ -1,7 +1,0 @@
-FundMeTest:test_AddressToAmountFundedIsUpdated() (gas: 99400)
-FundMeTest:test_MinUsdIsFive() (gas: 5426)
-FundMeTest:test_OnlyOwnerCanWithdraw() (gas: 101874)
-FundMeTest:test_OwnerIsMsgSender() (gas: 11949)
-FundMeTest:test_funderIsUpdated() (gas: 99689)
-FundMeTest:test_versionIsAccurate() (gas: 10679)
-FundMeTest:test_withdraw() (gas: 175083)

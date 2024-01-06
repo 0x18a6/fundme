@@ -3,8 +3,8 @@ pragma solidity ^0.8.23;
 
 import {Test, console} from "forge-std/Test.sol";
 import {FundMe} from "../../src/FundMe.sol";
-import {DeployFundMe} from "../../script/FundMe.s.sol";
-import {FundFundMe, WithdrawFundMe} from "../../script/interactions.s.sol";
+import {DeployFundMe} from "../../script/DeployFundMe.s.sol";
+import {FundFundMe, WithdrawFundMe} from "../../script/Interactions.s.sol";
 
 contract IntegrationsTest is Test {
     FundMe fundMe;
@@ -14,19 +14,17 @@ contract IntegrationsTest is Test {
 
     function setUp() external {
         DeployFundMe deploy = new DeployFundMe();
-        fundMe = deploy.run();
+        (fundMe,) = deploy.run();
         vm.deal(USER, INITIAL_BALANCE);
     }
 
     function testUserCanFundThanOwnerCanWithdraw() public {
         FundFundMe fundFundMe = new FundFundMe();
         fundFundMe.fundFundMe(address(fundMe));
-
-        assert(address(fundMe).balance != 0); // to make sure fundFundMe() works, the test may pass even if we're not sure withdrawFundMe() works
+        assert(address(fundMe).balance != 0);
 
         WithdrawFundMe withdrawFundMe = new WithdrawFundMe();
         withdrawFundMe.withdrawFundMe(address(fundMe));
-
         assert(address(fundMe).balance == 0);
     }
 }

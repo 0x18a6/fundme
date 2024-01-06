@@ -1,39 +1,29 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.18;
+pragma solidity ^0.8.23;
 
-import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
-import {PriceConverter} from "./PriceConverter.sol";
+event FUNDME__FUNDED(address indexed from, uint256 indexed value);
 
-error FundMe__NotOwner();
+error FUNDME__UNAUTHORIZED();
+error FUNDME__WITHDRAWAL_FAILED();
 
 contract FundMe {
-    using PriceConverter for uint256;
+    modifier onlyOwner() {
+        if (msg.sender != i_owner) revert FUNDME__UNAUTHORIZED();
+        _;
+    }
 
-    uint256 public constant MINIMUM_USD = 5e18;
     mapping(address => uint256) public s_addressToAmountFunded;
     address[] public s_funders;
     address public immutable i_owner;
-    AggregatorV3Interface private s_priceFeed;
 
-    constructor(address _priceFeed) {
+    constructor() {
         i_owner = msg.sender;
-        s_priceFeed = AggregatorV3Interface(_priceFeed);
     }
 
     function fund() public payable {
-        require(msg.value.getConversionRate(s_priceFeed) >= MINIMUM_USD, "You need to spend more ETH!");
         s_addressToAmountFunded[msg.sender] += msg.value;
         s_funders.push(msg.sender);
-    }
-
-    function getVersion() public view returns (uint256) {
-        return s_priceFeed.version();
-    }
-
-    modifier onlyOwner() {
-        // require(msg.sender == owner);
-        if (msg.sender != i_owner) revert FundMe__NotOwner();
-        _;
+        emit FUNDME__FUNDED(msg.sender, msg.value);
     }
 
     function withdraw() public onlyOwner {
@@ -44,8 +34,8 @@ contract FundMe {
         }
         s_funders = new address[](0);
 
-        (bool callSuccess,) = payable(msg.sender).call{value: address(this).balance}("");
-        require(callSuccess, "Call failed");
+        (bool success,) = payable(msg.sender).call{value: address(this).balance}("");
+        if (!success) revert FUNDME__WITHDRAWAL_FAILED();
     }
 
     function getFunder(uint256 _index) public view returns (address) {
@@ -56,17 +46,6 @@ contract FundMe {
         return i_owner;
     }
 
-    // Explainer from: https://solidity-by-example.org/fallback/
-    // Ether is sent to contract
-    //      is msg.data empty?
-    //          /   \
-    //         yes  no
-    //         /     \
-    //    receive()?  fallback()
-    //     /   \
-    //   yes   no
-    //  /        \
-    //receive()  fallback()
     fallback() external payable {
         fund();
     }

@@ -3,7 +3,9 @@ pragma solidity ^0.8.23;
 
 import {Test, console} from "forge-std/Test.sol";
 import {FundMe} from "../../src/FundMe.sol";
-import {DeployFundMe} from "../../script/FundMe.s.sol";
+import {DeployFundMe} from "../../script/DeployFundMe.s.sol";
+
+event FUNDME__FUNDED(address indexed from, uint256 indexed value);
 
 contract FundMeTest is Test {
     FundMe fundMe;
@@ -13,12 +15,14 @@ contract FundMeTest is Test {
 
     function setUp() external {
         DeployFundMe deployFundMe = new DeployFundMe();
-        fundMe = deployFundMe.run();
+        (fundMe,) = deployFundMe.run();
         vm.deal(USER, INITIAL_BALANCE);
     }
 
-    function test_MinUsdIsFive() public {
-        assertEq(fundMe.MINIMUM_USD(), 5e18);
+    modifier funded(address _prankster) {
+        vm.prank(_prankster);
+        fundMe.fund{value: VALUE}();
+        _;
     }
 
     // FIXME: this test is not passing on my machine
@@ -34,31 +38,28 @@ contract FundMeTest is Test {
         assertEq(fundMe.s_addressToAmountFunded(USER), VALUE);
     }
 
-    function test_funderIsUpdated() public payable {
+    function test_FundersIsUpdated() public payable {
         vm.prank(USER);
         fundMe.fund{value: VALUE}();
         assertEq(fundMe.getFunder(0), USER);
     }
 
-    function test_OwnerIsMsgSender() public {
-        /// @dev compare to the address of the test contract because technically it's the msg.sender of fundMe
-        assertEq(fundMe.i_owner(), msg.sender);
-    }
+    function test_FundIsEmitingEvent() public {
+        vm.expectEmit(true, true, false, false);
+        emit FUNDME__FUNDED(USER, VALUE);
 
-    function test_versionIsAccurate() public {
-        assertEq(fundMe.getVersion(), 4);
-    }
-
-    modifier funded(address _prankster) {
-        vm.prank(_prankster);
+        vm.prank(USER);
         fundMe.fund{value: VALUE}();
-        _;
+    }
+
+    function test_OwnerIsMsgSender() public {
+        /// @dev this is comparing `fundMe.i_owner()` to the address of the test contract because it's the msg.sender
+        assertEq(fundMe.i_owner(), msg.sender);
     }
 
     function test_OnlyOwnerCanWithdraw() public funded(USER) {
         vm.expectRevert();
         fundMe.withdraw();
-        vm.stopPrank();
     }
 
     function test_withdraw( /*uint256 _numberOfFunders*/ ) public funded(USER) {
